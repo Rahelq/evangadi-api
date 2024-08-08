@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const port = 5500;
+const port = 5600;
 const cors = require("cors");
 // app.get('/', (req, res)=>{
 //     res.send("welcome")
@@ -36,8 +36,6 @@ app.use("/api/users", userRoutes);
 app.use("/api/questions", questionRoutes);
 // answers routes middleware
 app.use("/api/answers", answerRoutes);
-
-
 
 async function start() {
 	try {

@@ -19,9 +19,9 @@ router.get("/getuser", getuser);
 // check user
 router.get("/check",authMiddleware,checkUser) 
 
-router.post("/forgot", forgotPassword); 
+// router.post("/forgot", forgotPassword); 
 
-router.post("/reset", resetPassword);
+// router.post("/reset", resetPassword);
 
 
 module.exports = router

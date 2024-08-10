@@ -2,18 +2,18 @@ const dbConnection = require("../db/dbConfig")
 const bcrypt = require('bcrypt')
 const {StatusCodes} = require('http-status-codes')
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+// const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
 
-var transporter = nodemailer.createTransport({
-  host: "sandbox.smtp.mailtrap.io",
-  port: 2525,
- auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// var transporter = nodemailer.createTransport({
+//   host: "sandbox.smtp.mailtrap.io",
+//   port: 2525,
+//  auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
 
 async function register(req,res){
     const {username, firstname, lastname,email, password} = req.body;
@@ -98,121 +98,124 @@ async function getuser(req, res) {
 
 
 
-  async function forgotPassword(req, res) {
-    const { email } = req.body;
-    const resetTokens = {};
-    console.log("req.body:", req.body);
-    console.log("email:", email);
+  // async function forgotPassword(req, res) {
+  //   const { email } = req.body;
+  //   const resetTokens = {};
+  //   console.log("req.body:", req.body);
+  //   console.log("email:", email);
   
-    if (!email) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "Please provide your email" });
-    }
-    try {
-      const [user] = await dbConnection.query(
-        "SELECT username FROM users where email = ?",
-        email
-      );
+  //   if (!email) {
+  //     return res
+  //       .status(StatusCodes.BAD_REQUEST)
+  //       .json({ msg: "Please provide your email" });
+  //   }
+  //   try {
+  //     const [user] = await dbConnection.query(
+  //       "SELECT username FROM users where email = ?",
+  //       email
+  //     );
       
   
-      if (user.length == 0) {
-        return res
-          .status(StatusCodes.BAD_REQUEST)
-          .json({ msg: "user is not registered" });
-      }
+  //     if (user.length == 0) {
+  //       return res
+  //         .status(StatusCodes.BAD_REQUEST)
+  //         .json({ msg: "user is not registered" });
+  //     }
   
-      const resetToken = crypto.randomBytes(20).toString("hex");
-      const rtExpiryDate = Date.now() + 600000;
+  //     const resetToken = crypto.randomBytes(20).toString("hex");
+  //     const rtExpiryDate = Date.now() + 600000;
   
-      console.log("resetToken", resetToken);
-      console.log("rtExpiryDate", rtExpiryDate);
+  //     console.log("resetToken", resetToken);
+  //     console.log("rtExpiryDate", rtExpiryDate);
   
-      // await dbConnection.query("UPDATE users SET resetToken = ? where email = ?", [
-      //   resetToken,
-      //   email,
-      // ]);
+  //     // await dbConnection.query("UPDATE users SET resetToken = ? where email = ?", [
+  //     //   resetToken,
+  //     //   email,
+  //     // ]);
   
-      await dbConnection.query("UPDATE users SET resetToken = ?, rtExpiryDate = ? WHERE email = ?", [
-        resetToken,
-        rtExpiryDate,
-        email,
-      ]);
+  //     await dbConnection.query("UPDATE users SET resetToken = ?, rtExpiryDate = ? WHERE email = ?", [
+  //       resetToken,
+  //       rtExpiryDate,
+  //       email,
+  //     ]);
 
-      // Define email content
-      const mailOptions = {
-        from: "api@demomailtrap.com",
-        to: email,
-        subject: "Password Reset request",
-        text:
-          `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n` +
-          `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
-          `http://localhost:5173/reset/${resetToken}\n\n` +
-          `If you did not request this, please ignore this email and your password will remain unchanged.\n`,
-      };
-      // Send email
-      transporter.sendMail(mailOptions, (err, info) => {
-        console.log("Email sent successfully!");
-        return res.status(StatusCodes.OK).json(info);
-      });
-    } catch (err) {
-      console.log(err.message);
-      return res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ msg: "Something went wrong. please try later" });
-    }
+  //     // Define email content
+  //     const mailOptions = {
+  //       from: "api@demomailtrap.com",
+  //       to: email,
+  //       subject: "Password Reset request",
+  //       text:
+  //         `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n` +
+  //         `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
+  //         `http://localhost:5173/reset/${resetToken}\n\n` +
+  //         `If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+  //     };
+  //     // Send email
+  //     transporter.sendMail(mailOptions, (err, info) => {
+  //       console.log("Email sent successfully!");
+  //       return res.status(StatusCodes.OK).json(info);
+  //     });
+  //   } catch (err) {
+  //     console.log(err.message);
+  //     return res
+  //       .status(StatusCodes.INTERNAL_SERVER_ERROR)
+  //       .json({ msg: "Something went wrong. please try later" });
+  //   }
+  // }
+  
+  // async function resetPassword(req, res) {
+  //   const { resetToken, newPassword } = req.body;
+  //   console.log("req.body:", req.body);
+  //   console.log(newPassword);
+  
+  //   //check new password satisifies length criteria
+  //   if (newPassword.length <= 8) {
+  //     return res
+  //       .status(StatusCodes.BAD_REQUEST)
+  //       .json({ msg: "password must be at least 8 charcters" });
+  //   }
+  
+  //   try {
+  //     //Check user exists using the resetToken
+  //     const [ruser] = await dbConnection.query(
+  //       "SELECT username FROM users where resetToken = ?",
+  //       resetToken
+  //     );
+  
+  //     console.log("ruser:", ruser);
+  
+  //     if (ruser.length == 0) {
+  //       return res
+  //         .status(StatusCodes.BAD_REQUEST)
+  //         .json({ msg: "user is not registered" });
+  //     }
+  
+  //     const rusername = ruser[0].username;
+  //     console.log("rusername:", rusername);
+  
+  //     // encrypt the password
+  //     const salt = await bcrypt.genSalt();
+  //     const hashednewPassword = await bcrypt.hash(newPassword, salt);
+  
+  //     //updade the password to new. Reset the token to Null
+  //     await dbConnection.query(
+  //       "UPDATE users SET password = ?, resetToken = ? where username = ?",
+  //       [hashednewPassword, null, rusername]
+  //     );
+  
+  //     return res
+  //       .status(StatusCodes.CREATED)
+  //       .json({ msg: "password reset successfully" });
+  //   } catch (err) {
+  //     console.log(err.message);
+  //     return res
+  //       .status(StatusCodes.INTERNAL_SERVER_ERROR)
+  //       .json({ msg: "Something went wrong. please try later" });
+  //   }
+  // }
+
+
+module.exports ={register,
+   login, checkUser,getuser, 
+  //  forgotPassword, resetPassword,
   }
-  
-  async function resetPassword(req, res) {
-    const { resetToken, newPassword } = req.body;
-    console.log("req.body:", req.body);
-    console.log(newPassword);
-  
-    //check new password satisifies length criteria
-    if (newPassword.length <= 8) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ msg: "password must be at least 8 charcters" });
-    }
-  
-    try {
-      //Check user exists using the resetToken
-      const [ruser] = await dbConnection.query(
-        "SELECT username FROM users where resetToken = ?",
-        resetToken
-      );
-  
-      console.log("ruser:", ruser);
-  
-      if (ruser.length == 0) {
-        return res
-          .status(StatusCodes.BAD_REQUEST)
-          .json({ msg: "user is not registered" });
-      }
-  
-      const rusername = ruser[0].username;
-      console.log("rusername:", rusername);
-  
-      // encrypt the password
-      const salt = await bcrypt.genSalt();
-      const hashednewPassword = await bcrypt.hash(newPassword, salt);
-  
-      //updade the password to new. Reset the token to Null
-      await dbConnection.query(
-        "UPDATE users SET password = ?, resetToken = ? where username = ?",
-        [hashednewPassword, null, rusername]
-      );
-  
-      return res
-        .status(StatusCodes.CREATED)
-        .json({ msg: "password reset successfully" });
-    } catch (err) {
-      console.log(err.message);
-      return res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ msg: "Something went wrong. please try later" });
-    }
-  }
-
-
-module.exports ={register, login, checkUser,getuser, forgotPassword, resetPassword,}
